@@ -38,17 +38,11 @@ module.exports = {
     cp.execSync(`adb${device ? (' -s ' + device) : ''} push ${path} /sdcard/${fileName}`)
   },
   // 安装程序
-  async installApk(path) {
-    const result = cp.execSync('adb devices');
-    const string = result.toString();
-    const devices = string.replace('List of devices attached', '').split('\n').filter(o => o).map(o => o.split('\t')[0]);
-    console.log('找到设备：', devices)
-    for (const device of devices) {
-      const command = `adb${device ? (' -s ' + device) : ''} install ${path}`
-      cp.exec(command, error => {
-        console.log(error ? `${path} ${device} 安装失败 ${error.message}` : `${path} ${device} 安装成功`)
-      })
-    }
+  async installApk(path, device) {
+    const command = `adb${device ? (' -s ' + device) : ''} install ${path}`
+    cp.exec(command, error => {
+      console.log(error ? `${path} ${device} 安装失败 ${error.message}` : `${path} ${device} 安装成功`)
+    })
   },
   // 拉取/sdcard/Dwnload 到 ./
   async pullMagiskPathed(device) {

@@ -4,6 +4,8 @@ const path = require('path')
 const fs = require('fs')
 const cp = require('child_process')
 
+const { filePath } = require('./config')
+
 async function sleep(time) {
   return new Promise(resolve => setTimeout(resolve, time))
 }
@@ -21,7 +23,7 @@ async function rebootToBootloader(device) {
 // 1 刷rec
 async function flashRec(device) {
   // 2.刷入rec
-  await util.fastbootFlash(path.join(__dirname, '../twrp-3.5.2_9-0-cancro.img'), device)
+  await util.fastbootFlash(filePath.recovery, device)
   // 3.重启到rec
   await sleep(3000)
   await util.bootloaderRebootToRecovery(device)
@@ -29,18 +31,17 @@ async function flashRec(device) {
 // 2 sideload刷机
 async function flashSystem(device) {
   console.log("正在刷机，在手机上查看进度")
-  util.sideload(path.join(__dirname, '../MK90.0-cancro-210603-RELEASE.zip'), device)
+  util.sideload(filePath.rom, device)
 }
 // 3 安装面具
 async function installMagisk() {
-  await util.installApk(path.join(__dirname, '../../Magisk-v23.0.apk'))
+  await util.installApk(filePath.magisk)
 }
 // 4 发送东西到sdcard
 async function pushSomethingToSdcard(device) {
-  console.log(path.join(__dirname, '../boot.img'))
-  await util.pushToSdcard(path.join(__dirname, '../boot.img'), device)
-  await util.pushToSdcard(path.join(__dirname, '../../riru-v25.4.4-release.zip'), device)
-  await util.pushToSdcard(path.join(__dirname, '../../LSPosed-v1.4.5-5767-release.zip'), device)
+  await util.pushToSdcard(filePath.boot, device)
+  await util.pushToSdcard(filePath.riru, device)
+  await util.pushToSdcard(filePath.lsp, device)
   console.log('传输完成！')
 }
 // 5 刷面具补丁
@@ -70,14 +71,12 @@ async function flashMagiskPathed(device) {
     console.error(device + " adb操作失败", error.message)
   }
 }
-async function installAllApk() {
-  console.log("正在异步安装 引流插件")
-  await util.installApk(path.join(__dirname, '../../TiktokFollowbackHook_v1.5.1.apk'))
-  console.log("正在异步安装 v2ray")
-  await util.installApk(path.join(__dirname, '../../v2rayNG_1.6.13_armeabi-v7a.apk'))
-  console.log("正在异步安装 tiktok 19.2.4")
-  await util.installApk(path.join(__dirname, '../../com-zhiliaoapp-musically-19.2.4.apk'))
-  console.log("执行完成，请等待结果")
+async function installAllApk(device) {
+  const apks = filePath.apks
+  for (const apk of apks) {
+    console.log("正在异步安装: " + apk)
+    await util.installApk(apk, device)
+  }
 }
 
 async function chooseFunc() {
