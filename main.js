@@ -4,7 +4,9 @@ const path = require('path')
 const fs = require('fs')
 const cp = require('child_process')
 
-const { filePath } = require('./config')
+const config = require('./config')
+
+let filePath = config[config.using]
 
 async function sleep(time) {
   return new Promise(resolve => setTimeout(resolve, time))
@@ -34,8 +36,8 @@ async function flashSystem(device) {
   util.sideload(filePath.rom, device)
 }
 // 3 安装面具
-async function installMagisk() {
-  await util.installApk(filePath.magisk)
+async function installMagisk(device) {
+  await util.installApk(filePath.magisk, device)
 }
 // 4 发送东西到sdcard
 async function pushSomethingToSdcard(device) {
@@ -82,27 +84,30 @@ async function installAllApk(device) {
 async function chooseFunc() {
   console.log(`
   功能列表 (支持多设备)：
+  0. 刷新设备列表
   1. 刷入recovery
   2. sideload 刷机
-  3. 安装面具
+  3. 安装Magisk
   4. 发送boot镜像、Lsposed、Riru 到sdcard根目录
-  5. 刷入面具补丁
+  5. 刷入Magisk补丁
   6. 安装引流插件、tiktok、v2ray
   `)
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
   })
+  const result1 = cp.execSync('adb devices');
+  const string1 = result1.toString();
+  const adb_devices = string1.replace('List of devices attached', '').split('\n').filter(o => o).map(o => o.split('\t')[0]);
+  const result2 = cp.execSync('fastboot devices');
+  const string2 = result2.toString();
+  const fastboot_devices = string2.split('\n').filter(o => o).map(o => o.split('\t')[0]);
+  console.log('找到adb设备：', adb_devices, '找到fastboot设备：', fastboot_devices)
   rl.question(`输入序号执行：`, async index => {
-    const result1 = cp.execSync('adb devices');
-    const string1 = result1.toString();
-    const adb_devices = string1.replace('List of devices attached', '').split('\n').filter(o => o).map(o => o.split('\t')[0]);
-
-    const result2 = cp.execSync('fastboot devices');
-    const string2 = result2.toString();
-    const fastboot_devices = string2.split('\n').filter(o => o).map(o => o.split('\t')[0]);
-    console.log('找到adb设备：', adb_devices, '找到fastboot设备：', fastboot_devices)
     switch (index) {
+      case '0':
+        chooseFunc()
+        break
       case '1':
         adb_devices.forEach(rebootToBootloader)
         await sleep(5000)

@@ -22,12 +22,16 @@ module.exports = {
   },
   // adb sideload
   async sideload(path, device) {
-    cp.exec(`adb${device ? (' -s ' + device) : ''} sideload ${path}`, error => {
+    cp.exec(`adb${device ? (' -s ' + device) : ''} sideload ${path}`, async error => {
       if (error) {
         console.error(device + " 刷机错误 ", error.message)
       } else {
         console.log(device + "刷机完成, 正在重启")
-        this.recoveryRebootToSystem(device)
+        try {
+          await this.recoveryRebootToSystem(device)
+        } catch (error) {
+          console.log('重启失败，请手动重启')
+        }
       }
     })
   },
