@@ -18,7 +18,11 @@ module.exports = {
     cp.execSync(`fastboot${device ? (' -s ' + device) : ''} reboot recovery`)
   },
   // fastboot刷入镜像
-  async fastbootFlash(path, device) {
+  async fastbootFlashRecovery(path, device) {
+    cp.execSync(`fastboot${device ? (' -s ' + device) : ''} flash recovery ${path}`)
+  },
+  // fastboot刷入镜像
+  async fastbootFlashBoot(path, device) {
     cp.execSync(`fastboot${device ? (' -s ' + device) : ''} flash boot ${path}`)
   },
   // adb sideload

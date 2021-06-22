@@ -25,7 +25,7 @@ async function rebootToBootloader(device) {
 // 1 刷rec
 async function flashRec(device) {
   // 2.刷入rec
-  await util.fastbootFlash(filePath.recovery, device)
+  await util.fastbootFlashRecovery(filePath.recovery, device)
   // 3.重启到rec
   await sleep(3000)
   await util.bootloaderRebootToRecovery(device)
@@ -59,7 +59,7 @@ async function flashMagiskPathed(device) {
       if (file.startsWith('magisk_patched-23000_')) {
         await util.rebootToBootloader(device)
         console.log(device + " 正在刷入补丁")
-        await util.fastbootFlash(dir + file)
+        await util.fastbootFlashBoot(dir + file)
         await sleep(2000)
         console.log(device + " 正在重启到系统")
         await util.bootloaderRebootToSystem()

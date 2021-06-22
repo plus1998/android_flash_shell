@@ -4,8 +4,8 @@ module.exports = {
   // 小米4
   cancro: {
     recovery: path.join(__dirname, '../cancro/twrp-3.5.2_9-0-cancro.img'),
-    // rom: path.join(__dirname, '../cancro/MK90.0-cancro-210603-RELEASE.zip'),
-    rom: path.join(__dirname, '../cancro/MK71.2-cancro-190228-HISTORY.zip'),
+    rom: path.join(__dirname, '../cancro/MK90.0-cancro-210603-RELEASE.zip'),
+    // rom: path.join(__dirname, '../cancro/MK71.2-cancro-190228-HISTORY.zip'),
     magisk: path.join(__dirname, '../Magisk-v23.0.apk'),
     boot: path.join(__dirname, '../cancro/boot.img'),
     riru: path.join(__dirname, '../riru-v25.4.4-release.zip'),
