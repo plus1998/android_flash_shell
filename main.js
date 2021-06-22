@@ -83,6 +83,7 @@ async function installAllApk(device) {
 
 async function chooseFunc() {
   console.log(`
+  ### 当前设备： ${config.using} ###
   功能列表 (支持多设备)：
   0. 刷新设备列表
   1. 刷入recovery
@@ -106,7 +107,6 @@ async function chooseFunc() {
   rl.question(`输入序号执行：`, async index => {
     switch (index) {
       case '0':
-        chooseFunc()
         break
       case '1':
         adb_devices.forEach(rebootToBootloader)
@@ -138,6 +138,9 @@ async function chooseFunc() {
         console.log('输入错误')
     }
     rl.close()
+    if (index === '0') {
+      chooseFunc()
+    }
   })
 }
 

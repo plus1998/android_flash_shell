@@ -1,5 +1,6 @@
 const cp = require('child_process')
 const fs = require('fs')
+const { resolve } = require('path')
 const path = require('path')
 
 module.exports = {
@@ -22,13 +23,15 @@ module.exports = {
   },
   // adb sideload
   async sideload(path, device) {
-    cp.exec(`adb${device ? (' -s ' + device) : ''} sideload ${path}`, async error => {
+    cp.exec(`adb${device ? (' -s ' + device) : ''} sideload ${path}`, error => {
       if (error) {
         console.error(device + " 刷机错误 ", error.message)
       } else {
         console.log(device + "刷机完成, 正在重启")
         try {
-          await this.recoveryRebootToSystem(device)
+          setTimeout(() => {
+            this.recoveryRebootToSystem(device)
+          }, 3000)
         } catch (error) {
           console.log('重启失败，请手动重启')
         }
